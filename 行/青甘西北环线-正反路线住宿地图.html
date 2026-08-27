@@ -4,11 +4,11 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-html,body{margin:0;background:#eee;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
-#wrap{position:relative;width:1500px;height:1000px;margin:0 auto;overflow:hidden}
-#map{width:1500px;height:1000px}
+html,body{margin:0;padding:0;background:#f5f0e8;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;height:100%;overflow:hidden}
+#wrap{position:relative;width:100%;height:100vh;overflow:hidden}
+#map{width:100%;height:100%}
 .hdr{position:absolute;z-index:600;top:12px;left:12px;background:rgba(255,253,248,.95);
- padding:12px 16px;border-radius:10px;box-shadow:0 3px 14px rgba(0,0,0,.18);max-width:330px}
+ padding:12px 16px;border-radius:10px;box-shadow:0 3px 14px rgba(0,0,0,.18);max-width:380px}
 .hdr h1{margin:0 0 5px;font-size:17px;color:#1d3b33}
 .hdr p{margin:0;font-size:12.5px;color:#5d6b64;line-height:1.55}
 .lgd{position:absolute;z-index:600;bottom:22px;left:12px;background:rgba(255,253,248,.95);
@@ -31,11 +31,11 @@ html,body{margin:0;background:#eee;font-family:-apple-system,BlinkMacSystemFont,
 </style></head><body>
 <div id="wrap">
 <div class="hdr"><h1>青甘环线 · 正反路线住宿地图</h1>
-<p>同一条环线，两种走法：橙色实线为<b>反向（逆时针）</b>经典走法，绿色箭头线为<b>正向（顺时针）</b>省钱走法。点击站点圆标查看两方案住宿价格对比（双人间/间价）。数据来自 meituan-travel 真实查询（2026-08-26）。</p></div>
+<p>同一条环线，两种走法：橙色实线为<b>反向（逆时针）</b>经典走法，绿色虚线为<b>正向（顺时针）</b>省钱走法。点击站点圆标查看两方案住宿价格对比（双人间/间价）。数据来自 meituan-travel 真实查询（2026-08-26）。</p></div>
 <div class="toggle">
-<button class="active" id="btn-both" onclick="show('both')">🔁 两者对比</button>
-<button class="inactive" id="btn-rev" onclick="show('rev')">🔄 反向环线</button>
-<button class="inactive" id="btn-fwd" onclick="show('fwd')">🔃 正向环线</button>
+<button class="active" id="btn-both" onclick="show('both')">两者对比</button>
+<button class="inactive" id="btn-rev" onclick="show('rev')">反向环线</button>
+<button class="inactive" id="btn-fwd" onclick="show('fwd')">正向环线</button>
 </div>
 <div class="lgd" id="lgd"></div>
 <div id="map"></div></div>
@@ -58,10 +58,9 @@ function drawRev(){
   const c=ROUTES[k];
   L.polyline(c,{color:'#fff',weight:8,opacity:.6}).addTo(map);
   const pl=L.polyline(c,{color:'#c2691f',weight:4.5,opacity:.95}).addTo(map);
-  const a=document.createElement('div');
   pl.bindPopup(`<b>反向 · 第${i+1}程</b><br>${k}<br>方向：${k.replace('→',' → ')}`);
   revLayers.push(pl);
- });
+});
 }
 function drawFwd(){
  FWD_SEQ.forEach((k,i)=>{
@@ -70,15 +69,7 @@ function drawFwd(){
   const pl=L.polyline(c,{color:'#2b7a5e',weight:4,opacity:.85,dashArray:'12,7'}).addTo(map);
   pl.bindPopup(`<b>正向 · 第${i+1}程</b><br>${k.replace('→',' ← ')}<br>与反向同一道路，方向相反`);
   fwdLayers.push(pl);
- });
- // 方向箭头装饰（decorator模拟：在每段中点放箭头marker）
- FWD_SEQ.forEach(k=>{
-  const c=ROUTES[k];
-  const mid=c[Math.floor(c.length/2)];
-  const icon=L.divIcon({html:'<div style="color:#2b7a5e;font-size:15px;font-weight:700;text-shadow:0 0 3px #fff,0 0 3px #fff;">➤</div>',className:'arrow',iconSize:[16,16],iconAnchor:[8,8]});
-  const m=L.marker([mid[0],mid[1]],{icon,interactive:false}).addTo(map);
-  fwdLayers.push(m);
- });
+});
 }
 function clearAll(){revLayers.forEach(l=>map.removeLayer(l));fwdLayers.forEach(l=>map.removeLayer(l));revLayers=[];fwdLayers=[];}
 
@@ -88,11 +79,11 @@ function addStays(){
   const diff=Math.round(((o.low+o.high)/2)-((f.low+f.high)/2));
   const r=s.n==='西宁'?9:7.5;
   const m=L.circleMarker([s.lat,s.lon],{radius:r,color:'#fff',weight:2.5,
-    fillColor:(o.peak||f.peak)?'#c0392b':((o.low+o.high)/2>(f.low+f.high)/2?'#2b7a5e':'#c2691f')),fillOpacity:1}).addTo(map);
+    fillColor:(o.peak||f.peak)?'#c0392b':((o.low+o.high)/2>(f.low+f.high)/2?'#2b7a5e':'#c2691f'),fillOpacity:1}).addTo(map);
   m.bindPopup(`<b>${s.n}</b>
    <div class="pp">
-    <div class="row"><span class="lbl">🔄 反向</span><span class="rev">¥${o.low}${o.high<900?'-'+o.high:'+'}<span class="${o.peak?'peak':''}"> (${o.date}${o.peak?' 国庆':''})</span></span></div>
-    <div class="row"><span class="lbl">🔃 正向</span><span class="fwd">¥${f.low}${f.high<900?'-'+f.high:'+'}<span class="${f.peak?'peak':''}"> (${f.date}${f.peak?' 国庆':''})</span></span></div>
+    <div class="row"><span class="lbl">反向</span><span class="rev">¥${o.low}${o.high<900?'-'+o.high:'+'}<span class="${o.peak?'peak':''}"> (${o.date}${o.peak?' 国庆':''})</span></span></div>
+    <div class="row"><span class="lbl">正向</span><span class="fwd">¥${f.low}${f.high<900?'-'+f.high:'+'}<span class="${f.peak?'peak':''}"> (${f.date}${f.peak?' 国庆':''})</span></span></div>
     <div class="row"><span class="lbl">差额/间</span><span style="color:${diff>0?'#2b7a5e':'#c0392b'};font-weight:600">${diff>0?'正向省 ¥'+diff:(diff<0?'正向贵 ¥'+(-diff):'持平')}</span></div>
     ${o.note?`<div class="note">${o.note}</div>`:''}
     ${f.note?`<div class="note">${f.note}</div>`:''}
