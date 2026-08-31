@@ -28,3 +28,6 @@ Reference/
 # Node (if any scripts added later)
 node_modules/
 npm-debug.log*
+
+# CatPaw local skills (project-level, not shared)
+.catpaw/
