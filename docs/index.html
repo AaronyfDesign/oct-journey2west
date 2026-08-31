@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>青甘环线 · 逐站风光参考</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
   :root {
     --bg: #0b1220;
@@ -38,14 +36,61 @@
   }
   .container { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
 
-  /* Map */
-  #mapwrap { max-width: 1100px; margin: 0 auto 30px; padding: 0 18px; }
-  #map {
-    height: 420px; width: 100%; border-radius: var(--radius); border: 1px solid var(--border);
-    overflow: hidden; box-shadow: var(--shadow);
+  /* Floating Route Map */
+  .route-float {
+    position: fixed; right: 16px; bottom: 16px; z-index: 100;
+    width: 300px; max-width: calc(100vw - 32px);
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+    transition: transform .3s, opacity .3s;
   }
-  .leaflet-popup-content-wrapper { background: var(--card); color: var(--text); border: 1px solid var(--border); }
-  .leaflet-popup-tip { background: var(--card); }
+  .route-float.collapsed {
+    width: auto; transform: translateY(calc(100% - 44px));
+  }
+  .route-float.collapsed .route-body {
+    opacity: 0; pointer-events: none; height: 0;
+  }
+  .route-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer;
+    user-select: none;
+  }
+  .route-header span { font-size: 13px; font-weight: 600; color: var(--text); }
+  .route-header .toggle {
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; background: rgba(255,255,255,.06); color: var(--muted); font-size: 12px;
+  }
+  .route-body { position: relative; padding: 8px; transition: opacity .25s; }
+  .route-body img { width: 100%; height: auto; display: block; border-radius: 8px; }
+  .route-markers { position: absolute; inset: 8px; }
+  .r-mark {
+    position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent2); border: 2px solid var(--bg); cursor: pointer;
+    transform: translate(-50%,-50%); transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 0 0 0 rgba(56,189,248,.4);
+  }
+  .r-mark:hover { transform: translate(-50%,-50%) scale(1.4); }
+  .r-mark.active {
+    background: var(--accent); box-shadow: 0 0 0 6px rgba(245,158,11,.25);
+    animation: markPulse 1.5s infinite;
+  }
+  @keyframes markPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,.35); }
+    50% { box-shadow: 0 0 0 8px rgba(245,158,11,.0); }
+  }
+  .r-mark::after {
+    content: attr(data-label); position: absolute; left: 50%; bottom: 140%;
+    transform: translateX(-50%); white-space: nowrap;
+    background: rgba(0,0,0,.75); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .r-mark:hover::after { opacity: 1; }
+  .route-note {
+    padding: 6px 10px 10px; font-size: 11px; color: var(--muted); text-align: center;
+  }
+  @media (max-width: 640px) {
+    .route-float { width: 220px; right: 10px; bottom: 10px; }
+  }
 
   /* A/B Decision */
   .ab-wrap { margin: 30px 0 50px; }
@@ -172,7 +217,18 @@
   </div>
 </header>
 
-<div id="mapwrap"><div id="map"></div></div>
+<!-- Floating Route Map -->
+<div class="route-float" id="routeFloat">
+  <div class="route-header" onclick="toggleRoute()">
+    <span>路线预览</span>
+    <div class="toggle" id="routeToggle">▼</div>
+  </div>
+  <div class="route-body" id="routeBody">
+    <img src="img/route_map.png" alt="青甘西北环线真实路线图">
+    <div class="route-markers" id="routeMarkers"></div>
+  </div>
+  <div class="route-note" id="routeNote">点击圆点跳转至对应日程</div>
+</div>
 
 <div class="container">
 
@@ -561,67 +617,62 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.day').forEach(d => reveal.observe(d));
 
-  // Leaflet Map
-  (function() {
-    const map = L.map('map', { zoomControl: false }).setView([37.5, 98.5], 6);
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri',
-      maxZoom: 16
-    }).addTo(map);
-    L.control.zoom({ position: 'topright' }).addTo(map);
+  // Floating Route Map
+  const routePoints = [
+    { id: 'd-heimahe',  left: '78%', top: '75%', label: '黑马河' },
+    { id: 'd-chaka',    left: '68%', top: '70%', label: '茶卡' },
+    { id: 'd-dachaidan',left: '35%', top: '58%', label: '大柴旦' },
+    { id: 'd-heidushan',left: '18%', top: '45%', label: '黑独山' },
+    { id: 'd-dunhuang', left: '22%', top: '23%', label: '敦煌' },
+    { id: 'd-danxia',   left: '65%', top: '38%', label: '丹霞' },
+    { id: 'd-qilian',   left: '72%', top: '50%', label: '祁连' },
+    { id: 'd-branch',   left: '88%', top: '85%', label: '西宁' },
+  ];
 
-    const mainRoute = [
-      [36.62, 101.78], // 西宁
-      [36.75, 99.82],  // 黑马河
-      [36.80, 99.08],  // 茶卡
-      [37.85, 95.35],  // 大柴旦
-      [38.75, 93.33],  // 冷湖/黑独山
-      [40.14, 94.66],  // 敦煌
-      [38.91, 100.13], // 张掖丹霞
-      [38.20, 100.25], // 卓尔山
-      [37.50, 101.20], // 达坂山/门源（大致）
-      [36.62, 101.78], // 西宁
-    ];
-    const branchB = [
-      [36.62, 101.78], // 西宁
-      [36.48, 101.57], // 塔尔寺
-      [36.06, 103.83], // 兰州
-      [35.93, 103.32], // 刘家峡
-    ];
-
-    L.polyline(mainRoute, { color: '#38bdf8', weight: 3, opacity: 0.85, dashArray: null }).addTo(map);
-    L.polyline(branchB, { color: '#f59e0b', weight: 3, opacity: 0.85, dashArray: '6,8' }).addTo(map);
-
-    const markers = [
-      { id: 'd-heimahe',  lat: 36.75,  lng: 99.82,  title: '黑马河日出',         day: '9.27' },
-      { id: 'd-chaka',    lat: 36.80,  lng: 99.08,  title: '茶卡盐湖',           day: '9.28' },
-      { id: 'd-dachaidan',lat: 37.85,  lng: 95.35,  title: '大柴旦翡翠湖',       day: '9.28' },
-      { id: 'd-heidushan',lat: 38.75,  lng: 93.33,  title: '黑独山',             day: '9.29' },
-      { id: 'd-dunhuang', lat: 40.14,  lng: 94.66,  title: '敦煌',               day: '9.30' },
-      { id: 'd-danxia',   lat: 38.91,  lng: 100.13, title: '七彩丹霞',           day: '10.2' },
-      { id: 'd-qilian',   lat: 38.20,  lng: 100.25, title: '卓尔山/祁连草原',    day: '10.3' },
-      { id: 'd-branch',   lat: 36.62,  lng: 101.78, title: '返程分支（西宁）',   day: '10.4–10.5' },
-      { id: 'd-branch-b', lat: 36.06,  lng: 103.83, title: '兰州（方案B）',      day: '10.4–10.5' },
-    ];
-
-    markers.forEach(m => {
-      const marker = L.circleMarker([m.lat, m.lng], {
-        radius: 7, fillColor: m.id === 'd-branch-b' ? '#f59e0b' : '#38bdf8',
-        color: '#0b1220', weight: 2, opacity: 1, fillOpacity: 0.9
-      }).addTo(map);
-      marker.bindPopup('<b>' + m.title + '</b><br><span style="color:#94a3b8">' + m.day + '</span>');
-      marker.on('click', () => {
-        const el = document.getElementById(m.id);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          el.classList.remove('highlight');
-          void el.offsetWidth; // reflow
-          el.classList.add('highlight');
-          setTimeout(() => el.classList.remove('highlight'), 1400);
-        }
-      });
+  const markerContainer = document.getElementById('routeMarkers');
+  routePoints.forEach(p => {
+    const dot = document.createElement('div');
+    dot.className = 'r-mark';
+    dot.style.left = p.left;
+    dot.style.top = p.top;
+    dot.dataset.id = p.id;
+    dot.dataset.label = p.label;
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const el = document.getElementById(p.id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.remove('highlight');
+        void el.offsetWidth;
+        el.classList.add('highlight');
+        setTimeout(() => el.classList.remove('highlight'), 1400);
+      }
     });
-  })();
+    markerContainer.appendChild(dot);
+  });
+
+  // Toggle route panel
+  function toggleRoute() {
+    const panel = document.getElementById('routeFloat');
+    const toggle = document.getElementById('routeToggle');
+    panel.classList.toggle('collapsed');
+    toggle.textContent = panel.classList.contains('collapsed') ? '▲' : '▼';
+  }
+
+  // Active marker sync on scroll
+  const dayObserver = new IntersectionObserver((entries) => {
+    let best = null, bestRatio = 0;
+    entries.forEach(e => {
+      if (e.intersectionRatio > bestRatio) {
+        bestRatio = e.intersectionRatio;
+        best = e.target.id;
+      }
+    });
+    if (best) {
+      document.querySelectorAll('.r-mark').forEach(m => m.classList.toggle('active', m.dataset.id === best));
+    }
+  }, { threshold: [0, 0.25, 0.5, 0.75, 1], rootMargin: '-100px 0px -40% 0px' });
+  document.querySelectorAll('.day').forEach(d => dayObserver.observe(d));
 
   // default state
   switchPlan('A');
