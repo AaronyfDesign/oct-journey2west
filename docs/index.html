@@ -336,7 +336,7 @@
     <div class="day" id="d-chaka" data-date="9.28">
       <div class="day-header">
         <time>9.28</time>
-        <h2>茶卡盐湖 → 大柴旦翡翠湖</h2>
+        <h2>茶卡盐湖 · 天空之镜</h2>
         <span class="tag">平光槽 → 斜光窗</span>
       </div>
       <div class="card-grid">
@@ -354,6 +354,16 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="day" id="d-dachaidan" data-date="9.28">
+      <div class="day-header">
+        <time>9.28</time>
+        <h2>大柴旦 · 翡翠湖</h2>
+        <span class="tag">斜光窗</span>
+      </div>
+      <div class="card-grid">
         <div class="photo-card" onclick="openLb('img/dachaidan.jpg','大柴旦翡翠湖 · 工业盐池调色盘')">
           <div class="photo-wrap">
             <img data-src="img/dachaidan.jpg" alt="大柴旦翡翠湖">
@@ -396,9 +406,9 @@
       </div>
     </div>
 
-    <div class="day" id="d-dunhuang" data-date="9.30–10.1">
+    <div class="day" id="d-dunhuang" data-date="9.30">
       <div class="day-header">
-        <time>9.30–10.1</time>
+        <time>9.30</time>
         <h2>敦煌 · 鸣沙山月牙泉 & 莫高窟</h2>
         <span class="tag">斜光窗 / 室内</span>
       </div>
@@ -427,6 +437,26 @@
             <p>室内洞窟不受日光影响，填平光槽最佳。晨光窗可拍九层楼外景（08:12 日出后 1h 侧光）。A 类票 14:30 下午场，8 个洞窟+两场数字电影。</p>
             <div class="astro">
               <span class="sun">☀ 日出 08:12</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="day" id="d-jiayuguan" data-date="10.1">
+      <div class="day-header">
+        <time>10.1</time>
+        <h2>嘉峪关 · 天下第一雄关</h2>
+        <span class="tag">平光槽</span>
+      </div>
+      <div class="card-grid">
+        <div class="photo-card">
+          <div class="photo-body" style="padding:30px 20px;">
+            <h4>嘉峪关关城</h4>
+            <p>明长城西端起点，河西走廊咽喉。城楼、瓮城、罗城三重防御体系完整保存。室内展陈不受光线影响，适合国庆首日平光槽填充。门票 110 元，建议 2–3 小时。</p>
+            <div class="astro">
+              <span class="sun">☀ 日出 08:15</span>
+              <span class="sun">☀ 日落 20:05</span>
             </div>
           </div>
         </div>
@@ -617,16 +647,17 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.day').forEach(d => reveal.observe(d));
 
-  // Floating Route Map
+  // Floating Route Map — markers aligned to actual route on the PNG
   const routePoints = [
-    { id: 'd-heimahe',  left: '78%', top: '75%', label: '黑马河' },
-    { id: 'd-chaka',    left: '68%', top: '70%', label: '茶卡' },
-    { id: 'd-dachaidan',left: '35%', top: '58%', label: '大柴旦' },
-    { id: 'd-heidushan',left: '18%', top: '45%', label: '黑独山' },
-    { id: 'd-dunhuang', left: '22%', top: '23%', label: '敦煌' },
-    { id: 'd-danxia',   left: '65%', top: '38%', label: '丹霞' },
-    { id: 'd-qilian',   left: '72%', top: '50%', label: '祁连' },
-    { id: 'd-branch',   left: '88%', top: '85%', label: '西宁' },
+    { id: 'd-heimahe',   left: '80.5%', top: '71.0%', label: '黑马河' },
+    { id: 'd-chaka',     left: '70.0%', top: '67.0%', label: '茶卡' },
+    { id: 'd-dachaidan', left: '36.5%', top: '55.5%', label: '大柴旦' },
+    { id: 'd-heidushan', left: '20.0%', top: '43.5%', label: '黑独山' },
+    { id: 'd-dunhuang',  left: '18.0%', top: '21.5%', label: '敦煌' },
+    { id: 'd-jiayuguan', left: '48.5%', top: '31.5%', label: '嘉峪关' },
+    { id: 'd-danxia',    left: '66.0%', top: '37.5%', label: '丹霞' },
+    { id: 'd-qilian',    left: '74.0%', top: '49.5%', label: '祁连' },
+    { id: 'd-branch',    left: '88.0%', top: '81.5%', label: '西宁' },
   ];
 
   const markerContainer = document.getElementById('routeMarkers');
