@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>青甘大环线 · AI 旅行攻略（Catravel 风格）</title>
+<style>
+  :root {
+    --ink:#16332B; --ink-soft:#1F4A3C; --ink-mist:#2E6653; --ink-fade:#5F7A6F;
+    --gold:#C9A063; --gold-soft:#E3C795; --gold-deep:#A97F3D;
+    --cream:#F7F3EA; --cream-deep:#F1EBDD; --paper:#FBF9F3;
+    --mapblue:#3E6E8E; --sunset:#E07A4F; --terracotta:#C75146;
+    --border:rgba(22,51,43,.14); --radius:16px; --shadow:0 12px 32px rgba(22,51,43,.10);
+    --serif:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:var(--sans); background:var(--cream); color:var(--ink); line-height:1.7; }
+  a { color:var(--mapblue); text-decoration:none; }
+  .container { max-width:1100px; margin:0 auto; padding:0 18px; }
+
+  .masthead { max-width:1100px; margin:0 auto; padding:26px 20px 0; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand-mark { width:44px; height:44px; border-radius:12px; background:var(--ink); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:var(--shadow); }
+  .brand-name { font-family:var(--serif); font-size:26px; font-weight:700; letter-spacing:1px; }
+  .brand-tag { font-size:13px; color:var(--ink-fade); margin-top:2px; }
+  .nav-btn { font-family:var(--serif); font-size:14px; padding:10px 22px; border-radius:999px; border:1px solid var(--border); background:var(--paper); color:var(--ink); transition:.2s; }
+  .nav-btn:hover { border-color:var(--gold); color:var(--gold-deep); }
+
+  .summary-card { margin:26px auto 8px; background:var(--ink); color:var(--cream); border-radius:20px; padding:30px 32px 26px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  .summary-card::after { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(700px 300px at 85% -20%, rgba(201,160,99,.14), transparent 70%); }
+  .summary-eyebrow { font-size:12px; letter-spacing:3px; color:var(--gold); margin-bottom:10px; word-break:break-all; position:relative; z-index:1; }
+  .summary-title { font-family:var(--serif); font-size:clamp(26px,4.5vw,40px); font-weight:700; margin:0 0 14px; line-height:1.25; position:relative; z-index:1; }
+  .summary-title em { font-style:normal; color:var(--gold-soft); }
+  .summary-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin:18px 0; position:relative; z-index:1; }
+  .meta-label { display:block; font-size:11px; letter-spacing:2px; color:rgba(247,243,234,.55); }
+  .meta-value { display:block; font-family:var(--serif); font-size:16px; color:var(--gold-soft); margin-top:3px; white-space:nowrap; }
+  .chip-row { display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 14px; position:relative; z-index:1; }
+  .chip.theme { font-size:12px; padding:4px 14px; border-radius:999px; border:1px solid rgba(201,160,99,.4); color:var(--gold-soft); }
+  .summary-desc { margin:6px 0 0; font-size:14px; color:rgba(247,243,234,.82); max-width:68ch; position:relative; z-index:1; }
+  .summary-note { margin-top:18px; padding:12px 16px; border-radius:12px; position:relative; z-index:1; background:rgba(251,249,243,.07); border:1px solid rgba(201,160,99,.28); font-size:12.5px; color:rgba(247,243,234,.75); }
+  .summary-note b { color:var(--gold-soft); font-weight:600; }
+
+  .sec-label { margin:54px 0 6px; font-size:12px; letter-spacing:4px; color:var(--gold-deep); }
+  .sec-title { font-family:var(--serif); font-size:clamp(22px,3vw,30px); font-weight:700; margin:0 0 22px; }
+  .sec-sub { font-size:12.5px; color:var(--ink-fade); margin:-14px 0 20px; max-width:80ch; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
+  .day-chip { display:inline-flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--border); border-radius:999px; padding:7px 16px; font-size:13px; color:var(--ink-soft); }
+  .day-chip i { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+  .map-box { position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow); background:var(--cream-deep); }
+  .map-box svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .map-tile { position:absolute; width:256px; height:256px; }
+  .map-poi { position:absolute; transform:translate(-50%,-50%); z-index:3; display:flex; align-items:center; gap:5px; }
+  .map-poi .dot { width:24px; height:24px; border-radius:50%; color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 2px 8px rgba(22,51,43,.35); }
+  .map-poi .lbl { font-size:11px; background:rgba(251,249,243,.92); color:var(--ink); padding:2px 8px; border-radius:6px; white-space:nowrap; box-shadow:0 1px 4px rgba(22,51,43,.18); max-width:130px; overflow:hidden; text-overflow:ellipsis; }
+  .map-cap { position:absolute; left:10px; top:10px; z-index:4; background:rgba(22,51,43,.82); color:var(--cream); font-size:11px; padding:5px 12px; border-radius:8px; }
+  .map-zoom { position:absolute; right:10px; top:10px; z-index:4; background:rgba(251,249,243,.9); color:var(--ink-fade); font-size:10px; padding:4px 10px; border-radius:6px; }
+  .map-legend { font-size:12px; color:var(--ink-fade); margin:10px 2px 0; }
+
+  .hl-grid { display:grid; gap:14px; grid-template-columns:1fr; margin-top:22px; }
+  @media (min-width:720px){ .hl-grid { grid-template-columns:1fr 1fr; } }
+  .hl-card { background:var(--paper); border:1px solid var(--border); border-radius:12px; padding:16px 18px; font-size:14px; color:var(--ink-soft); display:flex; gap:10px; align-items:flex-start; box-shadow:var(--shadow); }
+  .hl-ic { color:var(--gold-deep); flex-shrink:0; }
+
+  .day-sec { margin-bottom:46px; }
+  .day-label { font-size:11px; letter-spacing:4px; color:var(--gold-deep); margin-bottom:8px; }
+  .day-title-row { display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
+  .day-num { width:44px; height:44px; border-radius:12px; color:#fff; font-family:var(--serif); font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); flex-shrink:0; }
+  .day-title-row h3 { margin:0; font-family:var(--serif); font-size:clamp(19px,2.6vw,25px); font-weight:700; }
+  .day-map { height:280px; position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow); background:var(--cream-deep); margin-bottom:18px; }
+  .day-map.empty { height:auto; padding:26px; text-align:center; color:var(--ink-fade); font-size:13px; }
+  #map-overview { height:420px; }
+
+  .items { display:grid; gap:14px; }
+  .item { display:flex; gap:14px; background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+  .item-no { width:30px; height:30px; border-radius:50%; color:#fff; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid #fff; box-shadow:0 2px 8px rgba(22,51,43,.25); }
+  .item-body { flex:1; min-width:0; }
+  .item-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .item-time { font-size:12px; color:var(--gold-deep); font-weight:600; letter-spacing:1px; }
+  .item-head h4 { margin:0; font-family:var(--serif); font-size:16.5px; }
+  .stay { font-size:11px; padding:2px 10px; border-radius:999px; background:rgba(46,102,83,.1); color:var(--ink-mist); border:1px solid rgba(46,102,83,.25); }
+  .intro { margin:8px 0 0; font-size:13.5px; color:var(--ink-soft); }
+  .tips { margin:6px 0 0; font-size:12.5px; color:var(--ink-fade); }
+  .trans { margin-top:8px; font-size:12px; color:var(--mapblue); text-align:right; }
+  .trans.dim { color:var(--ink-fade); }
+
+  .meal-card { background:var(--cream-deep); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; }
+  .meal-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .meal-slot { font-size:12px; color:var(--gold-deep); font-weight:600; letter-spacing:1px; }
+  .meal-name { font-family:var(--serif); font-size:15.5px; font-weight:700; }
+  .verified { margin-left:auto; font-size:10px; line-height:1.3; text-align:center; color:var(--ink-mist); border:1px solid rgba(46,102,83,.35); border-radius:8px; padding:3px 8px; background:rgba(46,102,83,.08); }
+  .meal-stats { margin-top:6px; font-size:12.5px; color:var(--ink-fade); }
+  .meal-stats .rating { color:var(--gold-deep); font-size:14px; }
+  .meal-reason { margin:6px 0 0; font-size:12.5px; color:var(--ink-fade); }
+
+  .din-grid { display:grid; gap:14px; grid-template-columns:1fr; }
+  @media (min-width:720px){ .din-grid { grid-template-columns:1fr 1fr; } }
+  .din-card { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); }
+  .din-day { font-size:11px; letter-spacing:2px; color:var(--gold-deep); margin-bottom:6px; }
+
+  .bud-card { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; box-shadow:var(--shadow); }
+  .bud-row { display:grid; grid-template-columns:110px 1fr 90px 150px; align-items:center; gap:14px; padding:10px 0; border-bottom:1px dashed var(--border); }
+  .bud-row:last-of-type { border-bottom:none; }
+  .bud-label { font-family:var(--serif); font-size:15px; }
+  .bud-bar { height:8px; background:var(--cream-deep); border-radius:99px; overflow:hidden; }
+  .bud-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-deep)); border-radius:99px; }
+  .bud-amt { font-family:var(--serif); font-size:17px; color:var(--gold-deep); text-align:right; }
+  .bud-hint { font-size:11.5px; color:var(--ink-fade); }
+  .bud-total { display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; padding-top:14px; border-top:2px solid var(--ink); }
+  .bud-total .t-label { font-family:var(--serif); font-size:17px; font-weight:700; }
+  .bud-total .t-amt { font-family:var(--serif); font-size:24px; font-weight:700; color:var(--ink); }
+  @media (max-width:640px){ .bud-row { grid-template-columns:80px 1fr 70px; } .bud-hint { display:none; } }
+
+  .note-list { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:22px 26px; box-shadow:var(--shadow); }
+  .note-list ul { margin:0; padding-left:20px; }
+  .note-list li { margin-bottom:12px; font-size:13.5px; color:var(--ink-soft); }
+  .note-list li::marker { color:var(--gold-deep); }
+  .bk-when { display:inline-block; font-size:11px; color:var(--mapblue); background:rgba(62,110,142,.1); border:1px solid rgba(62,110,142,.3); border-radius:999px; padding:1px 10px; margin-right:8px; }
+  .bk-status { display:inline-block; font-size:11px; color:var(--terracotta); margin-left:8px; }
+
+  footer { text-align:center; padding:44px 20px; color:var(--ink-fade); font-size:12px; border-top:1px solid var(--border); margin-top:30px; }
+  footer .foot-brand { font-family:var(--serif); letter-spacing:2px; color:var(--ink); font-size:13px; margin-bottom:6px; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="brand">
+    <div class="brand-mark">🧭</div>
+    <div>
+      <div class="brand-name">青甘环线</div>
+      <div class="brand-tag">把想去的地方，变成值得出发的旅程</div>
+    </div>
+  </div>
+  <a class="nav-btn" href="index.html">← 逐站风光参考</a>
+</div>
+
+<div class="container">
+
+  <section class="summary-card">
+    <div class="summary-eyebrow">CATRAVEL · AI 旅行攻略 · guide_eaa1b2ef49424d7db96f0a1d84ad6f06</div>
+    <h1 class="summary-title">北京 → 青甘大环线 <em>11 天</em></h1>
+    <div class="summary-meta"><div><span class="meta-label">日期</span><span class="meta-value">2026-09-26 至 2026-10-06</span></div><div><span class="meta-label">同行</span><span class="meta-value">5 人同行</span></div><div><span class="meta-label">预算</span><span class="meta-value">¥25,000</span></div><div><span class="meta-label">节奏</span><span class="meta-value">紧凑</span></div></div>
+    <div class="chip-row"><span class="chip theme">青甘大环线自驾</span><span class="chip theme">日出日落与星空摄影</span><span class="chip theme">自然风光</span><span class="chip theme">丝路历史文化</span></div>
+    <p class="summary-desc">11天青甘大环线（9.26—10.6）自驾摄影行程：以西宁曹家堡落地取车为起点，沿青海湖—茶卡—大柴旦—黑独山/冷湖—敦煌—嘉峪关—张掖七彩丹霞—祁连—达坂山—西宁构成环线，最后在西宁完成市区与塔尔寺项目后乘Z22软卧返程。全程围绕日出/日落/星空拍摄窗口排程，平光时段用于赶路与休整，已避开鸣沙山万人演唱会与购物点、高强度徒步。</p>
+    <div class="summary-note"><b>地图与餐饮数据已核验：</b>本轮美团地图工具的 POI 与路线结果已按受控字段写入路线关系图；餐厅名称、评分、人均与推荐菜来自本轮大众点评工具的受控字段；天气、开放时间、酒店、车次、价格与图片仍请在出发前通过官方渠道复核。</div>
+  </section>
+
+  <div class="sec-label">O V E R V I E W</div>
+  <h2 class="sec-title">全程路线总览</h2>
+  <div class="chips">
+        <span class="day-chip"><i style="background:#2E6653"></i>Day 1 · 9.26 抵达西宁·直驱黑马河日落</span>
+        <span class="day-chip"><i style="background:#3E6E8E"></i>Day 2 · 9.27 黑马河日出·茶卡晨光·翡翠湖日落</span>
+        <span class="day-chip"><i style="background:#C75146"></i>Day 3 · 9.28 黑独山·冷湖石油基地遗址</span>
+        <span class="day-chip"><i style="background:#C99A3C"></i>Day 4 · 9.29 穿越当金山口·鸣沙山日落首刷</span>
+        <span class="day-chip"><i style="background:#7C5C9B"></i>Day 5 · 9.30 鸣沙山日出·莫高窟A类票·又见敦煌</span>
+        <span class="day-chip"><i style="background:#4D7C6D"></i>Day 6 · 10.1 嘉峪关关城</span>
+        <span class="day-chip"><i style="background:#2E6653"></i>Day 7 · 10.2 张掖七彩丹霞·卓尔山日落·祁连星空</span>
+        <span class="day-chip"><i style="background:#3E6E8E"></i>Day 8 · 10.3 达坂山观景台·抵达西宁</span>
+        <span class="day-chip"><i style="background:#C75146"></i>Day 9 · 10.4 青海湖北岸补拍·西宁市区</span>
+        <span class="day-chip"><i style="background:#C99A3C"></i>Day 10 · 10.5 塔尔寺晨光·西宁</span>
+        <span class="day-chip"><i style="background:#7C5C9B"></i>Day 11 · 10.6 Z22软卧返程</span>
+  </div>
+  <div class="map-box" id="map-overview"></div>
+  <p class="map-legend">蓝色实线为本轮已核验的美团地图路线；灰色虚线按每天行程顺序补齐相邻 POI 并连接跨天行程，仅表示计划走向。底图为高德地图真实瓦片（GCJ-02 坐标系）。</p>
+
+  <div class="hl-grid">
+        <div class="hl-card"><span class="hl-ic">✦</span>黑马河日出与环湖西路日落（两次进黑马河）</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>茶卡盐湖“天空之镜”晨光与倒影</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>大柴旦翡翠湖日落色彩层次</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>黑独山雅丹地貌与冷湖暗夜星空</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>鸣沙山月牙泉日落首刷+日出二刷（多次票）</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>莫高窟A类票15:00场与《又见敦煌》20:00场</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>嘉峪关关城落日下的明长城西端</div>
+        <div class="hl-card"><span class="hl-ic">✦</span>张掖七彩丹霞深度游与祁连卓尔山日落、星空</div>
+  </div>
+
+  <div class="sec-label">D A Y &nbsp; B Y &nbsp; D A Y</div>
+  <h2 class="sec-title">逐日行程</h2>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 1</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#2E6653">1</div>
+          <h3>9.26 抵达西宁·直驱黑马河日落</h3>
+        </div>
+        <div class="day-map" id="map-day-1"></div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">西北名优小吃城（西宁曹家堡机场）</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">3.7</b> 人均 ¥36 曹家堡机场</div>
+          <p class="meal-reason">落地后在机场内快速补给，选青海名优小吃，衔接后续长途自驾。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#2E6653">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约2小时</span></div>
+            <p class="intro">环湖西路黑马河段正对日落方位，湖面、经幡与晚霞同框，是青海湖西岸经典日落机位。</p>
+            <p class="tips">日落前后温差大，注意保暖与防高反；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">青藏特色炕锅肉土火锅石锅牦牛肉（青海湖·黑马河）</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.5</b> 人均 ¥70 青海湖</div>
+          <p class="meal-reason">黑马河镇人气炕锅羊肉店，拍摄后补充热量。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 2</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#3E6E8E">2</div>
+          <h3>9.27 黑马河日出·茶卡晨光·翡翠湖日落</h3>
+        </div>
+        <div class="day-map" id="map-day-2"></div>
+        <div class="items">
+        <div class="item">
+          <div class="item-no" style="background:#3E6E8E">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">日出前—日出</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约1.5小时</span></div>
+            <p class="intro">黑马河是青海湖西岸日出拍摄机位，晨光洒在湖面与经幡上，出片率高。</p>
+            <p class="tips">日出前提前到位占机位；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#3E6E8E">2</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">上午—中午</span><h4>茶卡盐湖</h4><span class="stay">建议停留 约2.5小时</span></div>
+            <p class="intro">“天空之镜”盐湖，上午光线利于倒影与镜面效果拍摄。</p>
+            <p class="tips">风大注意三脚架稳定；请以官方信息为准</p>
+            <div class="trans">自驾 · 约1小时15分钟</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">木沙特色炕锅美食(茶卡店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.6</b> 人均 ¥59 乌兰县（茶卡）</div>
+          <p class="meal-reason">茶卡镇人气炕锅羊肉，小份份量足，适合拍摄间隙快速用餐。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#3E6E8E">3</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>大柴旦翡翠湖景区</h4><span class="stay">建议停留 约2小时</span></div>
+            <p class="intro">盐湖色彩层次丰富，日落时色彩最饱满，是当日重点拍摄窗口。</p>
+            <p class="tips">关注日落时间提前选机位；请以官方信息为准</p>
+            <div class="trans">自驾 · 约5小时42分钟</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">伊品轩炕锅烤肉(大柴旦店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥67 大柴旦</div>
+          <p class="meal-reason">大柴旦镇评分较高的大盘鸡/炕锅烤肉，适合长途后用餐。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 3</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#C75146">3</div>
+          <h3>9.28 黑独山·冷湖石油基地遗址</h3>
+        </div>
+        <div class="day-map" id="map-day-3"></div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">顶顶牛特色干锅牦牛肉店(冷湖镇店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.5</b> 人均 ¥71 茫崖市（冷湖镇）</div>
+          <p class="meal-reason">冷湖镇特色牦牛肉干锅，是穿越途中的补给选择。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#C75146">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">下午—日落</span><h4>黑独山</h4><span class="stay">建议停留 约3小时</span></div>
+            <p class="intro">黑色雅丹与胭脂山地貌，光影反差强烈，适合日落与延时拍摄。</p>
+            <p class="tips">地貌脆弱请勿踩踏、勿驶离道路；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">香满园家常菜</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.4</b> 人均 ¥48 茫崖市（冷湖镇）</div>
+          <p class="meal-reason">冷湖镇家常菜，适合星空拍摄前用餐。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#C75146">2</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">夜间</span><h4>冷湖石油基地遗址(G215店)</h4><span class="stay">建议停留 约2小时</span></div>
+            <p class="intro">废弃石油小镇，暗夜条件好，是星空/银河拍摄点。</p>
+            <p class="tips">夜间拍摄注意保暖、结伴与行车安全；请以官方信息为准</p>
+            <div class="trans">自驾 · 约8分钟</div>
+          </div>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 4</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#C99A3C">4</div>
+          <h3>9.29 穿越当金山口·鸣沙山日落首刷</h3>
+        </div>
+        <div class="day-map" id="map-day-4"></div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">顺阖黄面馆·非遗</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4</b> 人均 ¥48 敦煌市沙州南路</div>
+          <p class="meal-reason">敦煌驴肉黄面非遗老字号，抵达敦煌后的当地特色午餐。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#C99A3C">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">下午—日落</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约3小时</span></div>
+            <p class="intro">鸣沙山日落首刷，金色沙丘与月牙泉同框；多次票自9.29起用。</p>
+            <p class="tips">日落前登山选机位，注意防沙与补水；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">敦游记烧烤.西北特色菜</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.7</b> 人均 ¥71 敦煌市沙州南路</div>
+          <p class="meal-reason">敦煌夜市一带烧烤，夜拍后可宵夜。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 5</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#7C5C9B">5</div>
+          <h3>9.30 鸣沙山日出·莫高窟A类票·又见敦煌</h3>
+        </div>
+        <div class="day-map" id="map-day-5"></div>
+        <div class="items">
+        <div class="item">
+          <div class="item-no" style="background:#7C5C9B">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">日出前—日出</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约2小时</span></div>
+            <p class="intro">鸣沙山日出二刷，利用多次票清晨入景区独占机位。</p>
+            <p class="tips">清晨入景区请核实开放时间；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">国辉胡羊焖饼(市场巷店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 人均 ¥66 敦煌市沙州南路</div>
+          <p class="meal-reason">敦煌三十年老店胡羊焖饼，适合午间补充体力。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#7C5C9B">2</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">下午（15:00场）</span><h4>敦煌莫高窟</h4><span class="stay">建议停留 约3小时</span></div>
+            <p class="intro">莫高窟A类票15:00场，含数字展示中心观影与窟区参观，是行程历史文化核心。</p>
+            <p class="tips">A类票需按时段入场，建议提前到数字展示中心；请以官方信息为准</p>
+            <div class="trans">自驾 · 约32分钟</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">敦煌夜市·沙州食坊美食街</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.4</b> 人均 ¥22 敦煌市沙州南路</div>
+          <p class="meal-reason">《又见敦煌》演出前在沙州夜市用餐，选择丰富。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#7C5C9B">3</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">夜间（20:00场）</span><h4>又见敦煌</h4><span class="stay">建议停留 约1.5小时</span></div>
+            <p class="intro">大型情景剧《又见敦煌》20:00场，全员最高优先安排。</p>
+            <p class="tips">提前入场，注意演出时间；请以官方信息为准</p>
+            <div class="trans">自驾 · 约16分钟</div>
+          </div>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 6</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#4D7C6D">6</div>
+          <h3>10.1 嘉峪关关城</h3>
+        </div>
+        <div class="day-map" id="map-day-6"></div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">清真·AAA烧烤(大唐美食街店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.1</b> 人均 ¥54 嘉峪关市大唐路商圈</div>
+          <p class="meal-reason">嘉峪关大唐美食街烧烤，当地特色，赶路途中补给。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#4D7C6D">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">下午—日落</span><h4>嘉峪关关城</h4><span class="stay">建议停留 约3小时</span></div>
+            <p class="intro">明长城西端关城，日落金色光线下城墙与城楼出片。</p>
+            <p class="tips">请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">嘉峪关大胖子烤肉(中鹏总店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.1</b> 人均 ¥55 嘉峪关市中鹏商圈</div>
+          <p class="meal-reason">当地老字号烤肉，拍摄后聚餐。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 7</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#2E6653">7</div>
+          <h3>10.2 张掖七彩丹霞·卓尔山日落·祁连星空</h3>
+        </div>
+        <div class="day-map" id="map-day-7"></div>
+        <div class="items">
+        <div class="item">
+          <div class="item-no" style="background:#2E6653">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">上午—中午</span><h4>张掖七彩丹霞旅游景区</h4><span class="stay">建议停留 约3.5小时</span></div>
+            <p class="intro">七彩丹霞深度游，上午侧光下色彩层次清晰，是重点拍摄段。</p>
+            <p class="tips">景区内以观光车串联观景台；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">张掖七彩镇/临泽丹霞公路沿线农家简餐</span></div>
+          
+          <p class="meal-reason">丹霞游览后就近简餐，节约时间赶往祁连。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#2E6653">2</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>卓尔山</h4><span class="stay">建议停留 约2.5小时</span></div>
+            <p class="intro">祁连卓尔山日落，丹霞地貌与雪山同框；当晚在祁连拍摄星空。</p>
+            <p class="tips">日落前上山，山上风大注意保暖；请以官方信息为准</p>
+            <div class="trans">自驾 · 约3小时30分钟</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">撒拉尔餐厅</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.6</b> 人均 ¥50 祁连县人民路</div>
+          <p class="meal-reason">祁连县城特色餐厅，星空拍摄前用餐。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 8</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#3E6E8E">8</div>
+          <h3>10.3 达坂山观景台·抵达西宁</h3>
+        </div>
+        <div class="day-map" id="map-day-8"></div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">正宗东乡春台手抓美食城 清真（门源）</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.8</b> 人均 ¥38 门源回族自治县环城西路</div>
+          <p class="meal-reason">门源手抓羊肉，翻达坂山前补给。</p>
+        </div>
+        <div class="item">
+          <div class="item-no" style="background:#3E6E8E">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">下午</span><h4>达坂山观景台</h4><span class="stay">建议停留 约1小时</span></div>
+            <p class="intro">227国道达坂山观景台，可俯瞰祁连山与门源谷地，是返西宁途中的观景机位。</p>
+            <p class="tips">海拔较高注意高反；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">清真·伊然轩青海特色美食</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥81 西宁市火车站商圈</div>
+          <p class="meal-reason">西宁火车站商圈青海特色菜，抵达西宁后用餐。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 9</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#C75146">9</div>
+          <h3>10.4 青海湖北岸补拍·西宁市区</h3>
+        </div>
+        <div class="day-map" id="map-day-9"></div>
+        <div class="items">
+        <div class="item">
+          <div class="item-no" style="background:#C75146">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">日出—上午</span><h4>青海湖国家重点风景名胜区</h4><span class="stay">建议停留 约2.5小时</span></div>
+            <p class="intro">青海湖北岸（沙岛/仙女湾一带）补拍日出与晨雾，随后返回西宁。</p>
+            <p class="tips">请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">西宁伊香苑炕锅肉</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 人均 ¥72 青海湖</div>
+          <p class="meal-reason">青海湖边炕锅肉，补拍后用餐。</p>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">莫家街小吃街</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 西宁市湟光</div>
+          <p class="meal-reason">西宁老牌小吃街，可尝甜醅、酿皮、羊肠面等青海小吃。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 10</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#C99A3C">10</div>
+          <h3>10.5 塔尔寺晨光·西宁</h3>
+        </div>
+        <div class="day-map" id="map-day-10"></div>
+        <div class="items">
+        <div class="item">
+          <div class="item-no" style="background:#C99A3C">1</div>
+          <div class="item-body">
+            <div class="item-head"><span class="item-time">清晨—上午</span><h4>塔尔寺</h4><span class="stay">建议停留 约3小时</span></div>
+            <p class="intro">塔尔寺晨光，酥油花、壁画与堆绣为“艺术三绝”，是人文拍摄重点。</p>
+            <p class="tips">寺内部分区域限制拍摄，请遵守现场规定；请以官方信息为准</p>
+            <div class="trans dim">交通待确认</div>
+          </div>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">热玛嘎布藏餐(湟中店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥61 湟中区中心城区</div>
+          <p class="meal-reason">湟中藏式土火锅，塔尔寺游览后用餐。</p>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">大新街夜市</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 西宁市大十字</div>
+          <p class="meal-reason">西宁市区夜市，返城后选择丰富。</p>
+        </div></div>
+      </section>
+
+      <section class="day-sec">
+        <div class="day-label">DAY 11</div>
+        <div class="day-title-row">
+          <div class="day-num" style="background:#7C5C9B">11</div>
+          <h3>10.6 Z22软卧返程</h3>
+        </div>
+        <div class="day-map empty">该日暂无通过核验的 POI 与路线数据。</div>
+        <div class="items">
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">午餐</span><span class="meal-name">清真·伊然轩青海特色美食（西宁火车站商圈）</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥81 西宁市火车站商圈</div>
+          <p class="meal-reason">西宁站附近青海特色菜，13:33乘Z22前用午餐。</p>
+        </div>
+        <div class="meal-card">
+          <div class="meal-head"><span class="meal-slot">晚餐</span><span class="meal-name">列车简餐（Z22 返程途中）</span></div>
+          
+          <p class="meal-reason">返程软卧途中的车上用餐，建议提前自备便携食物。</p>
+        </div></div>
+      </section>
+
+  <div class="sec-label">D I N I N G</div>
+  <h2 class="sec-title">本轮已核验美食推荐</h2>
+  <p class="sec-sub">以下餐厅、评分、人均与推荐菜来自本轮大众点评工具（美食榜单 / 商户搜索）的受控字段，经白名单校验后展示；营业状态与排队情况请以现场为准。</p>
+  <div class="din-grid">
+
+        <div class="din-card">
+          <div class="din-day">Day 1 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">西北名优小吃城（西宁曹家堡机场）</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">3.7</b> 人均 ¥36 曹家堡机场</div>
+          <p class="meal-reason">青稞甜醅酸酸甜甜，很解渴</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 1 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">青藏特色炕锅肉土火锅石锅牦牛肉</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.5</b> 人均 ¥70 青海湖</div>
+          <p class="meal-reason">青海湖黑马河打卡这家店 炕锅羊肉味道很棒</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 2 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">木沙特色炕锅美食(茶卡店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.6</b> 人均 ¥59 乌兰县（茶卡）</div>
+          <p class="meal-reason">小份炕锅羊肉份量足，四个女生吃不完</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 2 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">伊品轩炕锅烤肉(大柴旦店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥67 大柴旦</div>
+          <p class="meal-reason">大盘鸡 店 生意很好 很多人 烤串都很香</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 3 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">顶顶牛特色干锅牦牛肉店(冷湖镇店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.5</b> 人均 ¥71 茫崖市（冷湖镇）</div>
+          <p class="meal-reason">老板见我们吃得很香，又赠了份蒿子杆</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 3 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">香满园家常菜</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.4</b> 人均 ¥48 茫崖市（冷湖镇）</div>
+          <p class="meal-reason">板栗鸡甜咸交织，汤汁拌饭堪称一绝</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 4 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">顺阖黄面馆·非遗</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4</b> 人均 ¥48 敦煌市沙州南路</div>
+          <p class="meal-reason">愿意为了这碗驴肉黄面再来无数次</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 4 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">敦游记烧烤.西北特色菜</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.7</b> 人均 ¥71 敦煌市沙州南路</div>
+          <p class="meal-reason">敦游记烧烤·敦煌沙州夜市店</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 5 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">国辉胡羊焖饼(市场巷店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 人均 ¥66 敦煌市沙州南路</div>
+          <p class="meal-reason">三十年老店，羊肉软烂没膻味</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 5 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">敦煌夜市·沙州食坊美食街</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.4</b> 人均 ¥22 敦煌市沙州南路</div>
+          <p class="meal-reason">原来敦煌沙州夜市也是烧烤和碳水的天堂</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 6 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">清真·AAA烧烤(大唐美食街店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.1</b> 人均 ¥54 嘉峪关市大唐路商圈</div>
+          <p class="meal-reason">位于嘉峪关大唐美食街，烧烤人气店</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 6 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">嘉峪关大胖子烤肉(中鹏总店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.1</b> 人均 ¥55 嘉峪关市中鹏商圈</div>
+          <p class="meal-reason">夏夜晚坐户外，撸串喝啤吹风超舒服</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 7 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">撒拉尔餐厅</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.6</b> 人均 ¥50 祁连县人民路</div>
+          <p class="meal-reason">土豆片每桌必点，惊艳十足</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 8 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">正宗东乡春台手抓美食城 清真</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.8</b> 人均 ¥38 门源回族自治县环城西路</div>
+          <p class="meal-reason">老板热情，主动为顾客添满盖碗茶</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 8 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">清真·伊然轩青海特色美食</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥81 西宁市火车站商圈</div>
+          <p class="meal-reason">赶时间退菜，老板追出来送酸奶小吃</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 9 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">西宁伊香苑炕锅肉</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 人均 ¥72 青海湖</div>
+          <p class="meal-reason">炕锅羊肉的肉皮金黄，嚼着咯吱带响</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 9 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">莫家街小吃街</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.3</b> 西宁市湟光</div>
+          <p class="meal-reason">麦仁口感似牛杂汤炒肉肠，味道绝佳</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 10 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">热玛嘎布藏餐(湟中店)</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥61 湟中区中心城区</div>
+          <p class="meal-reason">住一晚吃两餐，这藏式土火锅真地道</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 10 · 晚餐</div>
+          <div class="meal-head"><span class="meal-name">大新街夜市</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 西宁市大十字</div>
+          <p class="meal-reason">摊贩小吃外，沿街大排档有当地特色</p>
+        </div>
+
+        <div class="din-card">
+          <div class="din-day">Day 11 · 午餐</div>
+          <div class="meal-head"><span class="meal-name">清真·伊然轩青海特色美食</span><span class="verified">本轮<br>已核验</span></div>
+          <div class="meal-stats"><b class="rating">4.9</b> 人均 ¥81 西宁市火车站商圈</div>
+          <p class="meal-reason">火车站商圈青海特色菜，便于赶车</p>
+        </div>
+  </div>
+
+  <div class="sec-label">B U D G E T</div>
+  <h2 class="sec-title">总预算分解</h2>
+  <div class="bud-card">
+
+        <div class="bud-row">
+          <span class="bud-label">交通</span>
+          <span class="bud-bar"><i style="width:30%"></i></span>
+          <span class="bud-amt">¥7.5k</span>
+          <span class="bud-hint">按实际预订为准</span>
+        </div>
+
+        <div class="bud-row">
+          <span class="bud-label">住宿</span>
+          <span class="bud-bar"><i style="width:35%"></i></span>
+          <span class="bud-amt">¥8.8k</span>
+          <span class="bud-hint">按实际预订为准</span>
+        </div>
+
+        <div class="bud-row">
+          <span class="bud-label">餐饮与门票</span>
+          <span class="bud-bar"><i style="width:35%"></i></span>
+          <span class="bud-amt">¥8.8k</span>
+          <span class="bud-hint">按实际消费为准</span>
+        </div>
+    <div class="bud-total"><span class="t-label">合计</span><span class="t-amt">¥25,000</span></div>
+  </div>
+
+  <div class="sec-label">N O T E S</div>
+  <h2 class="sec-title">行前提醒</h2>
+  <div class="note-list"><ul>
+        <li>出行窗口按问卷给定：2026-09-26至2026-10-06，共11天；9.26 14:25落地西宁曹家堡机场后直接取车前往黑马河，当天不在西宁市内停留。</li>
+        <li>9.27茶卡盐湖至大柴旦翡翠湖单段驾驶约410公里、约5小时42分钟，超出“紧凑”节奏单车程4小时的建议；此为参考骨架既定安排，建议评估轮换驾驶或机动调整。</li>
+        <li>部分同日路段（如大柴旦→黑独山、冷湖→敦煌、嘉峪关→七彩丹霞等）本轮未取得工具结果，相关交通已标注“待确认”。</li>
+        <li>餐饮信息来自大众点评商户搜索（dpshopsearchnew Skill）；本轮大众点评榜单能力（dianping_hotboard）不可用，故仅采用商户搜索结果，未使用任何榜单数据。</li>
+        <li>莫高窟A类票、又见敦煌演出、鸣沙山多次票为已锁定项；具体开放时间、入场与预约规则请以景区官方为准。</li>
+        <li>沿途住宿（黑马河/大柴旦/冷湖/敦煌/嘉峪关/张掖/祁连/西宁）需按当日行程就近确认，本次未取得酒店工具结果。</li>
+        <li>高海拔与昼夜大温差：备保暖衣物、抗高反药品与充足饮水；星空/日出拍摄注意结伴与行车安全。</li>
+        <li>拍摄日已按需求预留便携路餐（如9.26落地当天与长途赶路段）。</li>
+  </ul></div>
+
+  <div class="sec-label">B O O K I N G S</div>
+  <h2 class="sec-title">预约清单</h2>
+  <div class="note-list"><ul>
+        <li><span class="bk-when">出发前确认</span>确认9.26曹家堡机场取车与10.6西宁站还车（异地还车）事宜<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>复核莫高窟A类票15:00场次及数字展示中心入场时间<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>复核《又见敦煌》20:00场次<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>确认鸣沙山月牙泉3天多次票自9.29起用规则<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>确认10.6 Z22软卧返程车票（13:33 西宁站）<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>按逐日行程确认沿途住宿（黑马河/大柴旦/冷湖/敦煌/嘉峪关/张掖/祁连/西宁）<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>确认自驾沿途路况、车辆状况及高海拔地区天气<span class="bk-status">待确认</span></li>
+        <li><span class="bk-when">出发前确认</span>确认各景区实时开放时间与预约规则（以官方为准）<span class="bk-status">待确认</span></li>
+  </ul></div>
+
+</div>
+
+<footer>
+  <div class="foot-brand">青甘环线 · AI 旅行攻略</div>
+  数据生成于 2026/9/17 · 来源：CatPaw Managed Agent 行程建议；地图 POI 与路线来自本轮美团地图工具，餐厅评分与人均来自本轮大众点评工具的受控字段，其余外部旅行信息请在出发前复核<br>
+  返程分支已拍板：方案 A · 西宁收官（10.6 Z22 软卧返京）· 页面结构复刻 Catravel ResultPage
+</footer>
+
+<script>
+const MAP_DATA = {"pois": [{"day": 1, "itemName": "青海湖·黑马河", "latitude": 36.734748, "longitude": 99.776606}, {"day": 2, "itemName": "青海湖·黑马河", "latitude": 36.734748, "longitude": 99.776606}, {"day": 2, "itemName": "茶卡盐湖", "latitude": 36.699103, "longitude": 99.108501}, {"day": 2, "itemName": "大柴旦翡翠湖景区", "latitude": 37.806238, "longitude": 95.259415}, {"day": 3, "itemName": "黑独山", "latitude": 38.867924, "longitude": 93.449484}, {"day": 3, "itemName": "冷湖石油基地遗址(G215店)", "latitude": 38.819971, "longitude": 93.402934}, {"day": 4, "itemName": "鸣沙山月牙泉风景名胜区", "latitude": 40.089332, "longitude": 94.675321}, {"day": 5, "itemName": "鸣沙山月牙泉风景名胜区", "latitude": 40.089332, "longitude": 94.675321}, {"day": 5, "itemName": "敦煌莫高窟", "latitude": 40.04217, "longitude": 94.809396}, {"day": 5, "itemName": "又见敦煌", "latitude": 40.161006, "longitude": 94.763894}, {"day": 6, "itemName": "嘉峪关关城", "latitude": 39.800481, "longitude": 98.221591}, {"day": 7, "itemName": "张掖七彩丹霞旅游景区", "latitude": 38.952579, "longitude": 100.081059}, {"day": 7, "itemName": "卓尔山", "latitude": 38.182522, "longitude": 100.267353}, {"day": 8, "itemName": "达坂山观景台", "latitude": 37.378691, "longitude": 101.414026}, {"day": 9, "itemName": "青海湖国家重点风景名胜区", "latitude": 36.894098, "longitude": 100.227743}, {"day": 10, "itemName": "塔尔寺", "latitude": 36.487507, "longitude": 101.567731}], "routes": [{"to": "茶卡盐湖", "day": 2, "from": "青海湖·黑马河", "mode": "驾车", "duration": "约1小时15分钟", "distanceMeters": 83875}, {"to": "大柴旦翡翠湖景区", "day": 2, "from": "茶卡盐湖", "mode": "驾车", "duration": "约5小时42分钟", "distanceMeters": 410051}, {"to": "冷湖石油基地遗址(G215店)", "day": 3, "from": "黑独山", "mode": "驾车", "duration": "约8分钟", "distanceMeters": 6666}, {"to": "敦煌莫高窟", "day": 5, "from": "鸣沙山月牙泉风景名胜区", "mode": "驾车", "duration": "约32分钟", "distanceMeters": 28812}, {"to": "又见敦煌", "day": 5, "from": "敦煌莫高窟", "mode": "驾车", "duration": "约16分钟", "distanceMeters": 16586}, {"to": "卓尔山", "day": 7, "from": "张掖七彩丹霞旅游景区", "mode": "驾车", "duration": "约3小时30分钟", "distanceMeters": 208789}], "colors": ["#2E6653", "#3E6E8E", "#C75146", "#C99A3C", "#7C5C9B", "#4D7C6D", "#2E6653", "#3E6E8E", "#C75146", "#C99A3C", "#7C5C9B"], "days": [{"day": 1, "title": "9.26 抵达西宁·直驱黑马河日落"}, {"day": 2, "title": "9.27 黑马河日出·茶卡晨光·翡翠湖日落"}, {"day": 3, "title": "9.28 黑独山·冷湖石油基地遗址"}, {"day": 4, "title": "9.29 穿越当金山口·鸣沙山日落首刷"}, {"day": 5, "title": "9.30 鸣沙山日出·莫高窟A类票·又见敦煌"}, {"day": 6, "title": "10.1 嘉峪关关城"}, {"day": 7, "title": "10.2 张掖七彩丹霞·卓尔山日落·祁连星空"}, {"day": 8, "title": "10.3 达坂山观景台·抵达西宁"}, {"day": 9, "title": "10.4 青海湖北岸补拍·西宁市区"}, {"day": 10, "title": "10.5 塔尔寺晨光·西宁"}, {"day": 11, "title": "10.6 Z22软卧返程"}]};
+
+function project(lat, lng, z) {
+  const s = 256 * Math.pow(2, z);
+  const x = (lng + 180) / 360 * s;
+  const la = lat * Math.PI / 180;
+  const y = (1 - Math.log(Math.tan(la) + 1 / Math.cos(la)) / Math.PI) / 2 * s;
+  return [x, y];
+}
+function renderMap(el, poiList, routeList, opts) {
+  opts = opts || {};
+  const W = el.clientWidth, H = el.clientHeight;
+  if (!poiList.length || W === 0) { el.innerHTML = '<div style="padding:26px;text-align:center;color:#5F7A6F;font-size:13px">该日暂无通过核验的 POI 与路线数据。</div>'; return; }
+  let z = 4;
+  for (let zz = 15; zz >= 4; zz--) {
+    const pts = poiList.map(p => project(p.latitude, p.longitude, zz));
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    if (Math.max(...xs) - Math.min(...xs) <= W - 110 && Math.max(...ys) - Math.min(...ys) <= H - 110) { z = zz; break; }
+  }
+  const pts = poiList.map(p => project(p.latitude, p.longitude, z));
+  let minX = Math.min(...pts.map(p => p[0])), maxX = Math.max(...pts.map(p => p[0]));
+  let minY = Math.min(...pts.map(p => p[1])), maxY = Math.max(...pts.map(p => p[1]));
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+  const ox = cx - W / 2, oy = cy - H / 2;
+  // tiles
+  let html = '';
+  const tx0 = Math.floor(ox / 256), tx1 = Math.floor((ox + W) / 256);
+  const ty0 = Math.floor(oy / 256), ty1 = Math.floor((oy + H) / 256);
+  const maxT = Math.pow(2, z) - 1;
+  for (let tx = Math.max(0, tx0); tx <= Math.min(maxT, tx1); tx++) {
+    for (let ty = Math.max(0, ty0); ty <= Math.min(maxT, ty1); ty++) {
+      const sub = (tx + ty) % 4 + 1;
+      html += '<img class="map-tile" loading="lazy" style="left:' + (tx * 256 - ox) + 'px;top:' + (ty * 256 - oy) + 'px" src="https://webrd0' + sub + '.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=' + tx + '&y=' + ty + '&z=' + z + '" alt="">';
+    }
+  }
+  // route lines (svg)
+  let lines = '';
+  const byName = {};
+  poiList.forEach((p, i) => { byName[p.itemName] = pts[i]; });
+  // dashed connectors in visit order
+  if (opts.connect !== false) {
+    for (let i = 0; i < pts.length - 1; i++) {
+      lines += '<line x1="' + (pts[i][0]-ox) + '" y1="' + (pts[i][1]-oy) + '" x2="' + (pts[i+1][0]-ox) + '" y2="' + (pts[i+1][1]-oy) + '" stroke="#8aa0a8" stroke-width="2" stroke-dasharray="6 6" opacity="0.85"/>';
+    }
+  }
+  // verified routes solid blue
+  (routeList || []).forEach(r => {
+    const a = byName[r.from], b = byName[r.to];
+    if (a && b) {
+      lines += '<line x1="' + (a[0]-ox) + '" y1="' + (a[1]-oy) + '" x2="' + (b[0]-ox) + '" y2="' + (b[1]-oy) + '" stroke="#3E6E8E" stroke-width="3.5" opacity="0.9"/>';
+    }
+  });
+  html += '<svg viewBox="0 0 ' + W + ' ' + H + '">' + lines + '</svg>';
+  // markers
+  poiList.forEach((p, i) => {
+    const color = opts.colors ? opts.colors[p.day - 1] : '#2E6653';
+    const num = opts.localNumber ? (i + 1) : (opts.globalStart + i);
+    html += '<div class="map-poi" style="left:' + (pts[i][0] - ox) + 'px;top:' + (pts[i][1] - oy) + 'px"><span class="dot" style="background:' + color + '">' + num + '</span><span class="lbl">' + p.itemName + '</span></div>';
+  });
+  html += '<div class="map-cap">' + (opts.caption || '真实底图（高德地图）· POI / 路线已核验') + '</div>';
+  html += '<div class="map-zoom">Web Mercator z' + z + ' · 底图：高德地图</div>';
+  el.innerHTML = html;
+}
+
+window.addEventListener('load', () => {
+  // overview: global numbering across all days
+  renderMap(document.getElementById('map-overview'), MAP_DATA.pois, MAP_DATA.routes, { colors: MAP_DATA.colors, globalStart: 1 });
+  // day maps: local numbering
+  MAP_DATA.days.forEach(d => {
+    const el = document.getElementById('map-day-' + d.day);
+    if (!el) return;
+    const dp = MAP_DATA.pois.filter(p => p.day === d.day);
+    const dr = MAP_DATA.routes.filter(r => r.day === d.day);
+    renderMap(el, dp, dr, { colors: MAP_DATA.colors, localNumber: true });
+  });
+});
+</script>
+
+</body>
+</html>
