@@ -75,7 +75,12 @@
   #map-overview { height:420px; }
 
   .items { display:grid; gap:14px; }
-  .item { display:flex; gap:14px; background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+  .item { display:block; background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+  .item-row { display:flex; gap:14px; }
+  .item-photo { position:relative; width:100%; height:240px; border-radius:10px; overflow:hidden; margin-bottom:14px; background:var(--cream-deep); }
+  .item-photo.static { height:90px; }
+  .item-photo img { position:relative; z-index:1; width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-fallback { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; font-size:12px; line-height:1.8; color:var(--ink-fade); }
   .item-no { width:30px; height:30px; border-radius:50%; color:#fff; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid #fff; box-shadow:0 2px 8px rgba(22,51,43,.25); }
   .item-body { flex:1; min-width:0; }
   .item-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
@@ -195,12 +200,15 @@
           <p class="meal-reason">落地后在机场内快速补给，选青海名优小吃，衔接后续长途自驾。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#2E6653">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约2小时</span></div>
-            <p class="intro">环湖西路黑马河段正对日落方位，湖面、经幡与晚霞同框，是青海湖西岸经典日落机位。</p>
-            <p class="tips">日落前后温差大，注意保暖与防高反；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/qinghaihu2.jpg" loading="lazy" alt="青海湖·黑马河" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#2E6653">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约2小时</span></div>
+              <p class="intro">环湖西路黑马河段正对日落方位，湖面、经幡与晚霞同框，是青海湖西岸经典日落机位。</p>
+              <p class="tips">日落前后温差大，注意保暖与防高反；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -219,21 +227,27 @@
         <div class="day-map" id="map-day-2"></div>
         <div class="items">
         <div class="item">
-          <div class="item-no" style="background:#3E6E8E">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">日出前—日出</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约1.5小时</span></div>
-            <p class="intro">黑马河是青海湖西岸日出拍摄机位，晨光洒在湖面与经幡上，出片率高。</p>
-            <p class="tips">日出前提前到位占机位；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/qinghaihu3.jpg" loading="lazy" alt="青海湖·黑马河" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#3E6E8E">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">日出前—日出</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约1.5小时</span></div>
+              <p class="intro">黑马河是青海湖西岸日出拍摄机位，晨光洒在湖面与经幡上，出片率高。</p>
+              <p class="tips">日出前提前到位占机位；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#3E6E8E">2</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">上午—中午</span><h4>茶卡盐湖</h4><span class="stay">建议停留 约2.5小时</span></div>
-            <p class="intro">“天空之镜”盐湖，上午光线利于倒影与镜面效果拍摄。</p>
-            <p class="tips">风大注意三脚架稳定；请以官方信息为准</p>
-            <div class="trans">自驾 · 约1小时15分钟</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/chaka.jpg" loading="lazy" alt="茶卡盐湖" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#3E6E8E">2</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">上午—中午</span><h4>茶卡盐湖</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <p class="intro">“天空之镜”盐湖，上午光线利于倒影与镜面效果拍摄。</p>
+              <p class="tips">风大注意三脚架稳定；请以官方信息为准</p>
+              <div class="trans">自驾 · 约1小时15分钟</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -242,12 +256,15 @@
           <p class="meal-reason">茶卡镇人气炕锅羊肉，小份份量足，适合拍摄间隙快速用餐。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#3E6E8E">3</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>大柴旦翡翠湖景区</h4><span class="stay">建议停留 约2小时</span></div>
-            <p class="intro">盐湖色彩层次丰富，日落时色彩最饱满，是当日重点拍摄窗口。</p>
-            <p class="tips">关注日落时间提前选机位；请以官方信息为准</p>
-            <div class="trans">自驾 · 约5小时42分钟</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/feicuihu.jpg" loading="lazy" alt="大柴旦翡翠湖景区" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#3E6E8E">3</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>大柴旦翡翠湖景区</h4><span class="stay">建议停留 约2小时</span></div>
+              <p class="intro">盐湖色彩层次丰富，日落时色彩最饱满，是当日重点拍摄窗口。</p>
+              <p class="tips">关注日落时间提前选机位；请以官方信息为准</p>
+              <div class="trans">自驾 · 约5小时42分钟</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -271,12 +288,15 @@
           <p class="meal-reason">冷湖镇特色牦牛肉干锅，是穿越途中的补给选择。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#C75146">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">下午—日落</span><h4>黑独山</h4><span class="stay">建议停留 约3小时</span></div>
-            <p class="intro">黑色雅丹与胭脂山地貌，光影反差强烈，适合日落与延时拍摄。</p>
-            <p class="tips">地貌脆弱请勿踩踏、勿驶离道路；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/heidushan.jpg" loading="lazy" alt="黑独山" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#C75146">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">下午—日落</span><h4>黑独山</h4><span class="stay">建议停留 约3小时</span></div>
+              <p class="intro">黑色雅丹与胭脂山地貌，光影反差强烈，适合日落与延时拍摄。</p>
+              <p class="tips">地貌脆弱请勿踩踏、勿驶离道路；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -285,12 +305,15 @@
           <p class="meal-reason">冷湖镇家常菜，适合星空拍摄前用餐。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#C75146">2</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">夜间</span><h4>冷湖石油基地遗址(G215店)</h4><span class="stay">建议停留 约2小时</span></div>
-            <p class="intro">废弃石油小镇，暗夜条件好，是星空/银河拍摄点。</p>
-            <p class="tips">夜间拍摄注意保暖、结伴与行车安全；请以官方信息为准</p>
-            <div class="trans">自驾 · 约8分钟</div>
+          <div class="item-photo static"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#C75146">2</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">夜间</span><h4>冷湖石油基地遗址(G215店)</h4><span class="stay">建议停留 约2小时</span></div>
+              <p class="intro">废弃石油小镇，暗夜条件好，是星空/银河拍摄点。</p>
+              <p class="tips">夜间拍摄注意保暖、结伴与行车安全；请以官方信息为准</p>
+              <div class="trans">自驾 · 约8分钟</div>
+            </div>
           </div>
         </div></div>
       </section>
@@ -309,12 +332,15 @@
           <p class="meal-reason">敦煌驴肉黄面非遗老字号，抵达敦煌后的当地特色午餐。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#C99A3C">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">下午—日落</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约3小时</span></div>
-            <p class="intro">鸣沙山日落首刷，金色沙丘与月牙泉同框；多次票自9.29起用。</p>
-            <p class="tips">日落前登山选机位，注意防沙与补水；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/mingshashan.jpg" loading="lazy" alt="鸣沙山月牙泉风景名胜区" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#C99A3C">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">下午—日落</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约3小时</span></div>
+              <p class="intro">鸣沙山日落首刷，金色沙丘与月牙泉同框；多次票自9.29起用。</p>
+              <p class="tips">日落前登山选机位，注意防沙与补水；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -333,12 +359,15 @@
         <div class="day-map" id="map-day-5"></div>
         <div class="items">
         <div class="item">
-          <div class="item-no" style="background:#7C5C9B">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">日出前—日出</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约2小时</span></div>
-            <p class="intro">鸣沙山日出二刷，利用多次票清晨入景区独占机位。</p>
-            <p class="tips">清晨入景区请核实开放时间；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/crescent.jpg" loading="lazy" alt="鸣沙山月牙泉风景名胜区" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#7C5C9B">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">日出前—日出</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约2小时</span></div>
+              <p class="intro">鸣沙山日出二刷，利用多次票清晨入景区独占机位。</p>
+              <p class="tips">清晨入景区请核实开放时间；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -347,12 +376,15 @@
           <p class="meal-reason">敦煌三十年老店胡羊焖饼，适合午间补充体力。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#7C5C9B">2</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">下午（15:00场）</span><h4>敦煌莫高窟</h4><span class="stay">建议停留 约3小时</span></div>
-            <p class="intro">莫高窟A类票15:00场，含数字展示中心观影与窟区参观，是行程历史文化核心。</p>
-            <p class="tips">A类票需按时段入场，建议提前到数字展示中心；请以官方信息为准</p>
-            <div class="trans">自驾 · 约32分钟</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/mogao.jpg" loading="lazy" alt="敦煌莫高窟" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#7C5C9B">2</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">下午（15:00场）</span><h4>敦煌莫高窟</h4><span class="stay">建议停留 约3小时</span></div>
+              <p class="intro">莫高窟A类票15:00场，含数字展示中心观影与窟区参观，是行程历史文化核心。</p>
+              <p class="tips">A类票需按时段入场，建议提前到数字展示中心；请以官方信息为准</p>
+              <div class="trans">自驾 · 约32分钟</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -361,12 +393,15 @@
           <p class="meal-reason">《又见敦煌》演出前在沙州夜市用餐，选择丰富。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#7C5C9B">3</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">夜间（20:00场）</span><h4>又见敦煌</h4><span class="stay">建议停留 约1.5小时</span></div>
-            <p class="intro">大型情景剧《又见敦煌》20:00场，全员最高优先安排。</p>
-            <p class="tips">提前入场，注意演出时间；请以官方信息为准</p>
-            <div class="trans">自驾 · 约16分钟</div>
+          <div class="item-photo static"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#7C5C9B">3</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">夜间（20:00场）</span><h4>又见敦煌</h4><span class="stay">建议停留 约1.5小时</span></div>
+              <p class="intro">大型情景剧《又见敦煌》20:00场，全员最高优先安排。</p>
+              <p class="tips">提前入场，注意演出时间；请以官方信息为准</p>
+              <div class="trans">自驾 · 约16分钟</div>
+            </div>
           </div>
         </div></div>
       </section>
@@ -385,12 +420,15 @@
           <p class="meal-reason">嘉峪关大唐美食街烧烤，当地特色，赶路途中补给。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#4D7C6D">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">下午—日落</span><h4>嘉峪关关城</h4><span class="stay">建议停留 约3小时</span></div>
-            <p class="intro">明长城西端关城，日落金色光线下城墙与城楼出片。</p>
-            <p class="tips">请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/jiayuguan.jpg" loading="lazy" alt="嘉峪关关城" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#4D7C6D">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">下午—日落</span><h4>嘉峪关关城</h4><span class="stay">建议停留 约3小时</span></div>
+              <p class="intro">明长城西端关城，日落金色光线下城墙与城楼出片。</p>
+              <p class="tips">请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -409,12 +447,15 @@
         <div class="day-map" id="map-day-7"></div>
         <div class="items">
         <div class="item">
-          <div class="item-no" style="background:#2E6653">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">上午—中午</span><h4>张掖七彩丹霞旅游景区</h4><span class="stay">建议停留 约3.5小时</span></div>
-            <p class="intro">七彩丹霞深度游，上午侧光下色彩层次清晰，是重点拍摄段。</p>
-            <p class="tips">景区内以观光车串联观景台；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/danxia.jpg" loading="lazy" alt="张掖七彩丹霞旅游景区" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#2E6653">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">上午—中午</span><h4>张掖七彩丹霞旅游景区</h4><span class="stay">建议停留 约3.5小时</span></div>
+              <p class="intro">七彩丹霞深度游，上午侧光下色彩层次清晰，是重点拍摄段。</p>
+              <p class="tips">景区内以观光车串联观景台；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -423,12 +464,15 @@
           <p class="meal-reason">丹霞游览后就近简餐，节约时间赶往祁连。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#2E6653">2</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">傍晚—日落</span><h4>卓尔山</h4><span class="stay">建议停留 约2.5小时</span></div>
-            <p class="intro">祁连卓尔山日落，丹霞地貌与雪山同框；当晚在祁连拍摄星空。</p>
-            <p class="tips">日落前上山，山上风大注意保暖；请以官方信息为准</p>
-            <div class="trans">自驾 · 约3小时30分钟</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/zhuoer.jpg" loading="lazy" alt="卓尔山" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#2E6653">2</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>卓尔山</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <p class="intro">祁连卓尔山日落，丹霞地貌与雪山同框；当晚在祁连拍摄星空。</p>
+              <p class="tips">日落前上山，山上风大注意保暖；请以官方信息为准</p>
+              <div class="trans">自驾 · 约3小时30分钟</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -452,12 +496,15 @@
           <p class="meal-reason">门源手抓羊肉，翻达坂山前补给。</p>
         </div>
         <div class="item">
-          <div class="item-no" style="background:#3E6E8E">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">下午</span><h4>达坂山观景台</h4><span class="stay">建议停留 约1小时</span></div>
-            <p class="intro">227国道达坂山观景台，可俯瞰祁连山与门源谷地，是返西宁途中的观景机位。</p>
-            <p class="tips">海拔较高注意高反；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/dabanshan.jpg" loading="lazy" alt="达坂山观景台" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#3E6E8E">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">下午</span><h4>达坂山观景台</h4><span class="stay">建议停留 约1小时</span></div>
+              <p class="intro">227国道达坂山观景台，可俯瞰祁连山与门源谷地，是返西宁途中的观景机位。</p>
+              <p class="tips">海拔较高注意高反；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -476,12 +523,15 @@
         <div class="day-map" id="map-day-9"></div>
         <div class="items">
         <div class="item">
-          <div class="item-no" style="background:#C75146">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">日出—上午</span><h4>青海湖国家重点风景名胜区</h4><span class="stay">建议停留 约2.5小时</span></div>
-            <p class="intro">青海湖北岸（沙岛/仙女湾一带）补拍日出与晨雾，随后返回西宁。</p>
-            <p class="tips">请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/heimahe.jpg" loading="lazy" alt="青海湖国家重点风景名胜区" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#C75146">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">日出—上午</span><h4>青海湖国家重点风景名胜区</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <p class="intro">青海湖北岸（沙岛/仙女湾一带）补拍日出与晨雾，随后返回西宁。</p>
+              <p class="tips">请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
@@ -505,12 +555,15 @@
         <div class="day-map" id="map-day-10"></div>
         <div class="items">
         <div class="item">
-          <div class="item-no" style="background:#C99A3C">1</div>
-          <div class="item-body">
-            <div class="item-head"><span class="item-time">清晨—上午</span><h4>塔尔寺</h4><span class="stay">建议停留 约3小时</span></div>
-            <p class="intro">塔尔寺晨光，酥油花、壁画与堆绣为“艺术三绝”，是人文拍摄重点。</p>
-            <p class="tips">寺内部分区域限制拍摄，请遵守现场规定；请以官方信息为准</p>
-            <div class="trans dim">交通待确认</div>
+          <div class="item-photo"><div class="photo-fallback">暂无本轮可核验图片<br>请以景点官方信息为准</div><img src="img/guide/taer.jpg" loading="lazy" alt="塔尔寺" onerror="this.remove()"></div>
+          <div class="item-row">
+            <div class="item-no" style="background:#C99A3C">1</div>
+            <div class="item-body">
+              <div class="item-head"><span class="item-time">清晨—上午</span><h4>塔尔寺</h4><span class="stay">建议停留 约3小时</span></div>
+              <p class="intro">塔尔寺晨光，酥油花、壁画与堆绣为“艺术三绝”，是人文拍摄重点。</p>
+              <p class="tips">寺内部分区域限制拍摄，请遵守现场规定；请以官方信息为准</p>
+              <div class="trans dim">交通待确认</div>
+            </div>
           </div>
         </div>
         <div class="meal-card">
