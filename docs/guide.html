@@ -53,7 +53,10 @@
   .map-box { position:relative; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow); background:var(--cream-deep); }
   .map-box svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
   .map-tile { position:absolute; width:256px; height:256px; }
-  .map-poi { position:absolute; transform:translate(-50%,-50%); z-index:3; display:flex; align-items:center; gap:5px; }
+  .map-poi { position:absolute; transform:translate(-50%,-50%); z-index:3; display:flex; align-items:center; gap:5px; cursor:pointer; }
+  a.map-poi:hover .dot { transform:scale(1.15); }
+  a.map-poi:hover .lbl { border-color:var(--gold); color:var(--gold-deep); }
+  .map-poi .dot { transition:transform .15s; }
   .map-poi .dot { width:24px; height:24px; border-radius:50%; color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 2px 8px rgba(22,51,43,.35); }
   .map-poi .lbl { font-size:11px; background:rgba(251,249,243,.92); color:var(--ink); padding:2px 8px; border-radius:6px; white-space:nowrap; box-shadow:0 1px 4px rgba(22,51,43,.18); max-width:130px; overflow:hidden; text-overflow:ellipsis; }
   .map-cap { position:absolute; left:10px; top:10px; z-index:4; background:rgba(22,51,43,.82); color:var(--cream); font-size:11px; padding:5px 12px; border-radius:8px; }
@@ -207,7 +210,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#2E6653">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约2小时</span></div>
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=99.776606,36.734748&name=%E9%9D%92%E6%B5%B7%E6%B9%96%C2%B7%E9%BB%91%E9%A9%AC%E6%B2%B3&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">青海湖·黑马河<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2小时</span></div>
               <p class="intro">环湖西路黑马河段正对日落方位，湖面、经幡与晚霞同框，是青海湖西岸经典日落机位。</p>
               <p class="tips">日落前后温差大，注意保暖与防高反；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -234,7 +237,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#3E6E8E">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">日出前—日出</span><h4>青海湖·黑马河</h4><span class="stay">建议停留 约1.5小时</span></div>
+              <div class="item-head"><span class="item-time">日出前—日出</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=99.776606,36.734748&name=%E9%9D%92%E6%B5%B7%E6%B9%96%C2%B7%E9%BB%91%E9%A9%AC%E6%B2%B3&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">青海湖·黑马河<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约1.5小时</span></div>
               <p class="intro">黑马河是青海湖西岸日出拍摄机位，晨光洒在湖面与经幡上，出片率高。</p>
               <p class="tips">日出前提前到位占机位；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -246,7 +249,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#3E6E8E">2</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">上午—中午</span><h4>茶卡盐湖</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <div class="item-head"><span class="item-time">上午—中午</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=99.108501,36.699103&name=%E8%8C%B6%E5%8D%A1%E7%9B%90%E6%B9%96&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">茶卡盐湖<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2.5小时</span></div>
               <p class="intro">“天空之镜”盐湖，上午光线利于倒影与镜面效果拍摄。</p>
               <p class="tips">风大注意三脚架稳定；请以官方信息为准</p>
               <div class="trans">自驾 · 约1小时15分钟</div>
@@ -263,7 +266,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#3E6E8E">3</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>大柴旦翡翠湖景区</h4><span class="stay">建议停留 约2小时</span></div>
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=95.259415,37.806238&name=%E5%A4%A7%E6%9F%B4%E6%97%A6%E7%BF%A1%E7%BF%A0%E6%B9%96%E6%99%AF%E5%8C%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">大柴旦翡翠湖景区<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2小时</span></div>
               <p class="intro">盐湖色彩层次丰富，日落时色彩最饱满，是当日重点拍摄窗口。</p>
               <p class="tips">关注日落时间提前选机位；请以官方信息为准</p>
               <div class="trans">自驾 · 约5小时42分钟</div>
@@ -295,7 +298,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#C75146">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">下午—日落</span><h4>黑独山</h4><span class="stay">建议停留 约3小时</span></div>
+              <div class="item-head"><span class="item-time">下午—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=93.449484,38.867924&name=%E9%BB%91%E7%8B%AC%E5%B1%B1&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">黑独山<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3小时</span></div>
               <p class="intro">黑色雅丹与胭脂山地貌，光影反差强烈，适合日落与延时拍摄。</p>
               <p class="tips">地貌脆弱请勿踩踏、勿驶离道路；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -312,7 +315,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#C75146">2</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">夜间</span><h4>冷湖石油基地遗址(G215店)</h4><span class="stay">建议停留 约2小时</span></div>
+              <div class="item-head"><span class="item-time">夜间</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=93.402934,38.819971&name=%E5%86%B7%E6%B9%96%E7%9F%B3%E6%B2%B9%E5%9F%BA%E5%9C%B0%E9%81%97%E5%9D%80%28G215%E5%BA%97%29&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">冷湖石油基地遗址(G215店)<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2小时</span></div>
               <p class="intro">废弃石油小镇，暗夜条件好，是星空/银河拍摄点。</p>
               <p class="tips">夜间拍摄注意保暖、结伴与行车安全；请以官方信息为准</p>
               <div class="trans">自驾 · 约8分钟</div>
@@ -339,7 +342,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#C99A3C">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">下午—日落</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约3小时</span></div>
+              <div class="item-head"><span class="item-time">下午—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=94.675321,40.089332&name=%E9%B8%A3%E6%B2%99%E5%B1%B1%E6%9C%88%E7%89%99%E6%B3%89%E9%A3%8E%E6%99%AF%E5%90%8D%E8%83%9C%E5%8C%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">鸣沙山月牙泉风景名胜区<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3小时</span></div>
               <p class="intro">鸣沙山日落首刷，金色沙丘与月牙泉同框；多次票自9.29起用。</p>
               <p class="tips">日落前登山选机位，注意防沙与补水；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -366,7 +369,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#7C5C9B">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">日出前—日出</span><h4>鸣沙山月牙泉风景名胜区</h4><span class="stay">建议停留 约2小时</span></div>
+              <div class="item-head"><span class="item-time">日出前—日出</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=94.675321,40.089332&name=%E9%B8%A3%E6%B2%99%E5%B1%B1%E6%9C%88%E7%89%99%E6%B3%89%E9%A3%8E%E6%99%AF%E5%90%8D%E8%83%9C%E5%8C%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">鸣沙山月牙泉风景名胜区<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2小时</span></div>
               <p class="intro">鸣沙山日出二刷，利用多次票清晨入景区独占机位。</p>
               <p class="tips">清晨入景区请核实开放时间；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -383,7 +386,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#7C5C9B">2</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">下午（15:00场）</span><h4>敦煌莫高窟</h4><span class="stay">建议停留 约3小时</span></div>
+              <div class="item-head"><span class="item-time">下午（15:00场）</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=94.809396,40.04217&name=%E6%95%A6%E7%85%8C%E8%8E%AB%E9%AB%98%E7%AA%9F&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">敦煌莫高窟<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3小时</span></div>
               <p class="intro">莫高窟A类票15:00场，含数字展示中心观影与窟区参观，是行程历史文化核心。</p>
               <p class="tips">A类票需按时段入场，建议提前到数字展示中心；请以官方信息为准</p>
               <div class="trans">自驾 · 约32分钟</div>
@@ -400,7 +403,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#7C5C9B">3</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">夜间（20:00场）</span><h4>又见敦煌</h4><span class="stay">建议停留 约1.5小时</span></div>
+              <div class="item-head"><span class="item-time">夜间（20:00场）</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=94.763894,40.161006&name=%E5%8F%88%E8%A7%81%E6%95%A6%E7%85%8C&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">又见敦煌<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约1.5小时</span></div>
               <p class="intro">大型情景剧《又见敦煌》20:00场，全员最高优先安排。</p>
               <p class="tips">提前入场，注意演出时间；请以官方信息为准</p>
               <div class="trans">自驾 · 约16分钟</div>
@@ -427,7 +430,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#4D7C6D">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">下午—日落</span><h4>嘉峪关关城</h4><span class="stay">建议停留 约3小时</span></div>
+              <div class="item-head"><span class="item-time">下午—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=98.221591,39.800481&name=%E5%98%89%E5%B3%AA%E5%85%B3%E5%85%B3%E5%9F%8E&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">嘉峪关关城<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3小时</span></div>
               <p class="intro">明长城西端关城，日落金色光线下城墙与城楼出片。</p>
               <p class="tips">请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -454,7 +457,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#2E6653">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">上午—中午</span><h4>张掖七彩丹霞旅游景区</h4><span class="stay">建议停留 约3.5小时</span></div>
+              <div class="item-head"><span class="item-time">上午—中午</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=100.081059,38.952579&name=%E5%BC%A0%E6%8E%96%E4%B8%83%E5%BD%A9%E4%B8%B9%E9%9C%9E%E6%97%85%E6%B8%B8%E6%99%AF%E5%8C%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">张掖七彩丹霞旅游景区<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3.5小时</span></div>
               <p class="intro">七彩丹霞深度游，上午侧光下色彩层次清晰，是重点拍摄段。</p>
               <p class="tips">景区内以观光车串联观景台；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -471,7 +474,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#2E6653">2</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">傍晚—日落</span><h4>卓尔山</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <div class="item-head"><span class="item-time">傍晚—日落</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=100.267353,38.182522&name=%E5%8D%93%E5%B0%94%E5%B1%B1&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">卓尔山<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2.5小时</span></div>
               <p class="intro">祁连卓尔山日落，丹霞地貌与雪山同框；当晚在祁连拍摄星空。</p>
               <p class="tips">日落前上山，山上风大注意保暖；请以官方信息为准</p>
               <div class="trans">自驾 · 约3小时30分钟</div>
@@ -503,7 +506,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#3E6E8E">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">下午</span><h4>达坂山观景台</h4><span class="stay">建议停留 约1小时</span></div>
+              <div class="item-head"><span class="item-time">下午</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=101.414026,37.378691&name=%E8%BE%BE%E5%9D%82%E5%B1%B1%E8%A7%82%E6%99%AF%E5%8F%B0&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">达坂山观景台<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约1小时</span></div>
               <p class="intro">227国道达坂山观景台，可俯瞰祁连山与门源谷地，是返西宁途中的观景机位。</p>
               <p class="tips">海拔较高注意高反；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -530,7 +533,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#C75146">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">日出—上午</span><h4>青海湖国家重点风景名胜区</h4><span class="stay">建议停留 约2.5小时</span></div>
+              <div class="item-head"><span class="item-time">日出—上午</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=100.227743,36.894098&name=%E9%9D%92%E6%B5%B7%E6%B9%96%E5%9B%BD%E5%AE%B6%E9%87%8D%E7%82%B9%E9%A3%8E%E6%99%AF%E5%90%8D%E8%83%9C%E5%8C%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">青海湖国家重点风景名胜区<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约2.5小时</span></div>
               <p class="intro">青海湖北岸（沙岛/仙女湾一带）补拍日出与晨雾，随后返回西宁。</p>
               <p class="tips">请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -562,7 +565,7 @@
           <div class="item-row">
             <div class="item-no" style="background:#C99A3C">1</div>
             <div class="item-body">
-              <div class="item-head"><span class="item-time">清晨—上午</span><h4>塔尔寺</h4><span class="stay">建议停留 约3小时</span></div>
+              <div class="item-head"><span class="item-time">清晨—上午</span><h4><a class="shop-link" href="https://uri.amap.com/marker?position=101.567731,36.487507&name=%E5%A1%94%E5%B0%94%E5%AF%BA&src=octtravel&coordinate=gaode&callnative=0" target="_blank" rel="noopener" title="高德地图核对位置">塔尔寺<span class="shop-arrow">↗</span></a></h4><span class="stay">建议停留 约3小时</span></div>
               <p class="intro">塔尔寺晨光，酥油花、壁画与堆绣为“艺术三绝”，是人文拍摄重点。</p>
               <p class="tips">寺内部分区域限制拍摄，请遵守现场规定；请以官方信息为准</p>
               <div class="trans dim">交通待确认</div>
@@ -866,9 +869,10 @@ function renderMap(el, poiList, routeList, opts) {
   poiList.forEach((p, i) => {
     const color = opts.colors ? opts.colors[p.day - 1] : '#2E6653';
     const num = opts.localNumber ? (i + 1) : (opts.globalStart + i);
-    html += '<div class="map-poi" style="left:' + (pts[i][0] - ox) + 'px;top:' + (pts[i][1] - oy) + 'px"><span class="dot" style="background:' + color + '">' + num + '</span><span class="lbl">' + p.itemName + '</span></div>';
+    const url = 'https://uri.amap.com/marker?position=' + p.longitude + ',' + p.latitude + '&name=' + encodeURIComponent(p.itemName) + '&src=octtravel&coordinate=gaode&callnative=0';
+    html += '<a class="map-poi" href="' + url + '" target="_blank" rel="noopener" title="在高德地图核对「' + p.itemName + '」位置" style="left:' + (pts[i][0] - ox) + 'px;top:' + (pts[i][1] - oy) + 'px"><span class="dot" style="background:' + color + '">' + num + '</span><span class="lbl">' + p.itemName + '</span></a>';
   });
-  html += '<div class="map-cap">' + (opts.caption || '真实底图（高德地图）· POI / 路线已核验') + '</div>';
+  html += '<div class="map-cap">' + (opts.caption || '真实底图（高德地图）· 点击标记可在高德核对位置') + '</div>';
   html += '<div class="map-zoom">Web Mercator z' + z + ' · 底图：高德地图</div>';
   el.innerHTML = html;
 }
